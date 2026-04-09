@@ -1,0 +1,184 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="1. System Overview" id="emg-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="enterprise-mcp-gateway — System Overview" style="text;html=1;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="adk" value="Google ADK agent&#10;(reference consumer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="client" value="MCP reference client&#10;(Python)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="auth" value="Auth + scope middleware&#10;token verify · per-tool scope check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="320" y="160" width="280" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="server" value="FastMCP server&#10;tool registry · request dispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="660" y="160" width="280" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="tools" value="Internal enterprise tools&#10;(adapters / SDK calls / DB reads)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="980" y="160" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="audit" value="Audit log&#10;caller · tool · scope · outcome · ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="320" y="320" width="380" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="obs" value="Structured logging · request tracing · Pytest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;dashed=1" vertex="1" parent="1">
+          <mxGeometry x="320" y="430" width="840" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" style="endArrow=classic;html=1" edge="1" parent="1" source="adk" target="auth"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="endArrow=classic;html=1" edge="1" parent="1" source="client" target="auth"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="endArrow=classic;html=1" edge="1" parent="1" source="auth" target="server"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="endArrow=classic;html=1" edge="1" parent="1" source="server" target="tools"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="endArrow=classic;html=1" edge="1" parent="1" source="server" target="audit"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2. Auth + Scope Flow" id="emg-2">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Auth + Scope Decision Flow" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="a1" value="Incoming MCP call&#10;{tool, args, headers}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="240" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="Token present + valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" value="401 unauthorized&#10;audit: outcome=auth_fail" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="620" y="60" width="260" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" value="Caller in tool's allowed scopes?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="320" y="240" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="a5" value="403 forbidden&#10;audit: outcome=scope_denied" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="620" y="260" width="260" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="a6" value="Dispatch to tool function&#10;structured log + trace span" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="320" y="400" width="540" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="a7" value="Audit log append&#10;caller · tool · scope · outcome · ts · latency" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="320" y="520" width="540" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" style="endArrow=classic;html=1" edge="1" parent="1" source="a1" target="a2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="no" style="endArrow=classic;html=1" edge="1" parent="1" source="a2" target="a3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="yes" style="endArrow=classic;html=1" edge="1" parent="1" source="a2" target="a4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="no" style="endArrow=classic;html=1" edge="1" parent="1" source="a4" target="a5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="yes" style="endArrow=classic;html=1" edge="1" parent="1" source="a4" target="a6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="endArrow=classic;html=1" edge="1" parent="1" source="a6" target="a7"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="3. Tool Catalog" id="emg-3">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Tool Catalog — registered tools and their scopes (illustrative)" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr" value="Tool name                          Allowed scopes                               Backed by" style="text;html=1;fontFamily=Courier New;fontSize=12;fontStyle=1;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="tt1" value="record_lookup(record_id)            analyst, ops                                 record store adapter" style="text;html=1;fontFamily=Courier New;fontSize=11;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="tt2" value="recent_activity(record_id, limit)   analyst, ops                                 activity feed adapter" style="text;html=1;fontFamily=Courier New;fontSize=11;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="135" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="tt3" value="case_queue(filter)                  ops                                           case service adapter" style="text;html=1;fontFamily=Courier New;fontSize=11;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="tt4" value="write_disposition(record, action)   ops, supervisor                              workflow service adapter" style="text;html=1;fontFamily=Courier New;fontSize=11;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="185" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="tt5" value="export_audit(window)                supervisor, compliance                       audit log adapter" style="text;html=1;fontFamily=Courier New;fontSize=11;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="1080" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="reg" value="ToolRegistry&#10;each entry: name, callable, allowed_scopes, response_schema, ratelimit&#10;loaded at startup; the auth middleware reads allowed_scopes per dispatch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8" vertex="1" parent="1">
+          <mxGeometry x="40" y="270" width="1080" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="note" value="Adding a new tool: register the function with its allowed_scopes — auth middleware enforces it automatically." style="text;html=1;fontSize=11;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="40" y="390" width="1080" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="4. Sequence — ADK end-to-end" id="emg-4">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Sequence — Google ADK agent calling the gateway end to end" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="x1" value="ADK agent" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="x2" value="MCP client" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="x3" value="Auth middleware" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="x4" value="FastMCP server" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="720" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="x5" value="Tool function" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="940" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="x6" value="Audit log" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="1100" y="80" width="40" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="l1" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="100" y="160" as="sourcePoint"/><mxPoint x="100" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="l2" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="300" y="160" as="sourcePoint"/><mxPoint x="300" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="l3" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="160" as="sourcePoint"/><mxPoint x="520" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="l4" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="160" as="sourcePoint"/><mxPoint x="740" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="l5" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="960" y="160" as="sourcePoint"/><mxPoint x="960" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="l6" style="endArrow=none;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1120" y="160" as="sourcePoint"/><mxPoint x="1120" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1" value="reason: pick tool" style="endArrow=classic;html=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="100" y="190" as="sourcePoint"/><mxPoint x="300" y="190" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2" value="call_tool(record_lookup, args, token)" style="endArrow=classic;html=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="300" y="220" as="sourcePoint"/><mxPoint x="520" y="220" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3" value="verify token + scope" style="endArrow=classic;html=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="250" as="sourcePoint"/><mxPoint x="740" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4" value="dispatch(record_lookup, args)" style="endArrow=classic;html=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="280" as="sourcePoint"/><mxPoint x="960" y="280" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5" value="result" style="endArrow=classic;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="960" y="310" as="sourcePoint"/><mxPoint x="740" y="310" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6" value="audit append" style="endArrow=classic;html=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="340" as="sourcePoint"/><mxPoint x="1120" y="340" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7" value="MCP response" style="endArrow=classic;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="380" as="sourcePoint"/><mxPoint x="300" y="380" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8" value="parsed result" style="endArrow=classic;html=1;dashed=1" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="300" y="410" as="sourcePoint"/><mxPoint x="100" y="410" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9" value="agent reasons + may chain another tool" style="text;html=1;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="100" y="430" width="500" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="5. Observability" id="emg-5">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Observability — logs, traces, audit" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="o1" value="Structured logger&#10;structlog · JSON · request_id, caller_id, tool, scope" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="340" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="o2" value="Tracing&#10;OpenTelemetry spans per dispatch&#10;parent: incoming MCP request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="340" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="o3" value="Audit log (immutable)&#10;append-only collection: caller, tool, args_hash, outcome, ts, latency" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="800" y="100" width="340" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="o4" value="Test surface (Pytest)&#10;auth happy path / 401 / 403 / scope mismatch / unknown tool / audit append" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="1100" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="o5" value="Every request emits one log line, one trace span, one audit row." style="text;html=1;fontSize=11;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="40" y="350" width="1100" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
